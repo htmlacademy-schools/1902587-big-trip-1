@@ -1,0 +1,150 @@
+import dayjs from 'dayjs';
+
+const getRandomInteger = (a = 0, b = 1) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+
+  return Math.floor(lower + Math.random() * (upper - lower + 1));
+};
+
+const generateWaypointType = () => {
+  const waypointType = [
+    'Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'
+  ];
+
+  const randomIndex = getRandomInteger(0, waypointType.length - 1);
+  return waypointType[randomIndex];
+};
+
+const generateDestination = () => {
+  const destinations = [
+    'Geneva', 'London', 'Mexico', 'Odessa', 'Riga', 'Rome', 'Chicago'
+  ];
+
+  const randomIndex = getRandomInteger(0, destinations.length - 1);
+  return destinations[randomIndex];
+};
+
+const generateDescription = () => {
+  const descriptions = [
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget.',
+    'Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra.',
+    'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
+    'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis.',
+    'Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.'
+  ];
+
+  const randomIndex = getRandomInteger(0, descriptions.length - 1);
+  return descriptions[randomIndex];
+};
+
+export const generateDates = () => {
+  const maxDayGap = 7;
+  const maxHourGap = 23;
+  const maxMinuteGap = 59;
+  const dayStart = getRandomInteger(-maxDayGap, maxDayGap);
+  const hourStart = getRandomInteger(-maxHourGap, maxHourGap);
+  const minuteStart = getRandomInteger(-maxMinuteGap, maxMinuteGap);
+  const dayEnd = getRandomInteger(0, maxDayGap);
+  const hourEnd = getRandomInteger(0, maxHourGap);
+  const minuteEnd = getRandomInteger(0, maxMinuteGap);
+
+  const dateStart = dayjs()
+    .add(dayStart, 'day')
+    .add(hourStart, 'hour')
+    .add(minuteStart, 'minute');
+
+  const dateEnd = dateStart.clone()
+    .add(dayEnd, 'day')
+    .add(hourEnd, 'hour')
+    .add(minuteEnd, 'minute');
+
+  return{
+    start: dateStart.toDate(),
+    end: dateEnd.toDate()
+  };
+};
+
+const generateDurationStay = (start, end) => {
+  const period = new Date(end - start);
+
+  return {
+    day: period.getDate() - 1,
+    hour: period.getHours(),
+    minute: period.getMinutes()
+  };
+};
+
+const generateAdditionalOptions = () => {
+  const offers = [
+    {
+      name: 'Add luggage',
+      price: 30,
+      type: 'luggage',
+      isChosen: Boolean(getRandomInteger(0,1))
+    },
+    {
+      name: 'Switch to comfort class',
+      price: 100,
+      type: 'class',
+      isChosen: Boolean(getRandomInteger(0,1))
+    },
+    {
+      name: 'Add meal',
+      price: 15,
+      type: 'meal',
+      isChosen: Boolean(getRandomInteger(0,1))
+    },
+    {
+      name: 'Choose seats',
+      price: 5,
+      type: 'flight',
+      isChosen: Boolean(getRandomInteger(0,1))
+    },
+    {
+      name: 'Travel by train',
+      price: 40,
+      type: 'transport',
+      isChosen: Boolean(getRandomInteger(0,1))
+    },
+  ];
+
+  const offersNum = getRandomInteger(0, 4);
+  const offersRundom = [];
+  while (offersRundom.length < offersNum){
+    const offer = Math.floor(Math.random() * offers.length);
+    if (offersRundom.indexOf(offers[offer]) === -1) {
+      offersRundom.push(offers[offer]);
+    }
+  }
+
+  return offersRundom;
+};
+
+const generatePhoto = () => {
+  const randomPhoto = getRandomInteger(1, 5);
+  const photo = [];
+  for (let i = 0; i < randomPhoto; i++){
+    photo.push(`http://picsum.photos/248/152?r=${getRandomInteger(1, 100)}`);
+  }
+  return photo;
+};
+
+const generatePrice = () => getRandomInteger(10, 1000);
+
+export const generateTrip = () => {
+  const dates = generateDates();
+
+  return {
+    waypointType: generateWaypointType(),
+    destination: generateDestination(),
+    description: generateDescription(),
+    dateStart: dates.start,
+    dateEnd: dates.end,
+    durationStay: generateDurationStay(dates.start, dates.end),
+    additionalOptions: generateAdditionalOptions(),
+    photo: generatePhoto(),
+    price: generatePrice(),
+    isFavorite: Boolean(getRandomInteger(0,1))
+  };
+};
