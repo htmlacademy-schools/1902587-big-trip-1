@@ -109,7 +109,7 @@ const generateAdditionalOptions = () => {
     },
   ];
 
-  const offersNum = getRandomInteger(0, 4);
+  const offersNum = getRandomInteger(0, 5);
   const offersRundom = [];
   while (offersRundom.length < offersNum){
     const offer = Math.floor(Math.random() * offers.length);
