@@ -1,8 +1,6 @@
 import {generateDates} from '../mock/trip.js';
 import dayjs from 'dayjs';
 
-
-
 export const createSiteTabTemplate = (trips) => {
 
   const randomDate = generateDates();
