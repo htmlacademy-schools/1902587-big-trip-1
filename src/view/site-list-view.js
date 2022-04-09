@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
+import {createElement} from '../render';
 
-export const createSiteListTeamplate = (trip) => {
+export const createSiteListTemplate = (trip) => {
   const {waypointType, destination, dateStart, dateEnd, durationStay, additionalOptions, price, isFavorite} = trip;
 
   const startDay = dayjs(dateStart).format('MMM DD');
@@ -76,4 +77,29 @@ export const createSiteListTeamplate = (trip) => {
                </div>
              </li>`;
 };
+
+export default class SiteListView{
+  #element = null;
+  #trip = null;
+
+  constructor(trip) {
+    this.#trip = trip;
+  }
+
+  get element() {
+    if (!this.#element){
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template(){
+    return createSiteListTemplate(this.#trip);
+  }
+
+  removeElement(){
+    this.#element = null;
+  }
+}
 

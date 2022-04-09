@@ -1,7 +1,8 @@
 import {generateDates} from '../mock/trip.js';
 import dayjs from 'dayjs';
+import {createElement} from "../render";
 
-export const createSiteTabTemplate = (trips) => {
+const createSiteTabTemplate = (trips) => {
 
   const randomDate = generateDates();
   const startDate = dayjs(randomDate.start).format('MMM D');
@@ -27,4 +28,29 @@ export const createSiteTabTemplate = (trips) => {
              </p>
            </section>`;
 };
+
+export default class SiteTabView{
+  #element = null;
+  #trips = null;
+
+  constructor(trips) {
+    this.#trips = trips;
+  }
+
+  get element() {
+    if (!this.#element){
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template(){
+    return createSiteTabTemplate(this.#trips);
+  }
+
+  removeElement(){
+    this.#element = null;
+  }
+}
 
