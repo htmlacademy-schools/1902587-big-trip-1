@@ -1,6 +1,6 @@
 import {generateDates} from '../mock/trip.js';
 import dayjs from 'dayjs';
-import {createElement} from "../render";
+import {createElement} from '../render';
 
 const createSiteTabTemplate = (trips) => {
 
