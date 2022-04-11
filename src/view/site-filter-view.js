@@ -1,4 +1,6 @@
-export const createSiteFilterTeamplate = () => (
+import {createElement} from '../render';
+
+const createSiteFilterTemplate = () => (
   `<div class="trip-main__trip-controls  trip-controls">
              <div class="trip-controls__navigation">
                <h2 class="visually-hidden">Switch trip view</h2>
@@ -32,3 +34,21 @@ export const createSiteFilterTeamplate = () => (
            </div>`
 );
 
+export default class SiteFilterView{
+  #element = null;
+
+  get element() {
+    if (!this.#element){
+      this.#element = createElement(this.template);
+    }
+    return this.#element;
+  }
+
+  get template() {
+    return createSiteFilterTemplate();
+  }
+
+  removeElement(){
+    this.#element = null;
+  }
+}

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
+import {createElement} from '../render';
 
-export const createSiteEventEditTeamplate = (trip) => {
+const createSiteEventEditTemplate = (trip) => {
   const {additionalOptions, photo, dateStart, dateEnd, price, waypointType, destination, description} = trip;
 
   const getOfferElement = (offer) => {
@@ -144,3 +145,28 @@ export const createSiteEventEditTeamplate = (trip) => {
             </li>
   `;
 };
+
+export default class SiteEventEditView{
+  #element = null;
+  #trip = null;
+
+  constructor(trip) {
+    this.#trip = trip;
+  }
+
+  get element() {
+    if (!this.#element){
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template(){
+    return createSiteEventEditTemplate(this.#trip);
+  }
+
+  removeElement(){
+    this.#element = null;
+  }
+}
