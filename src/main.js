@@ -6,6 +6,7 @@ import SiteSortView from './view/site-sort-view.js';
 import SiteListView from './view/site-list-view.js';
 import SiteEventEditView from './view/site-event-edit-view.js';
 import SiteEventListView from './view/site-event-list-view';
+import SiteEmptyTripListView from './view/site-empty-trip-list-view';
 import {generateTrip} from './mock/trip.js';
 
 const TRIP_COUNT = 15;
@@ -49,13 +50,20 @@ const renderTask = (eventListElement, trip) => {
   render(eventListElement, tripComponent.element, RenderPosition.BEFOREEND);
 };
 
-const eventListComponent = new SiteEventListView();
-render(tripEvents, eventListComponent.element, RenderPosition.AFTEREND);
+if (trips.length === 0){
+  render(tripTab, new SiteTabView(trips).element, RenderPosition.AFTERBEGIN);
+  render(tripFilters, new SiteFilterView().element, RenderPosition.BEFOREBEGIN);
+  render(tripEvents, new SiteEmptyTripListView().element, RenderPosition.AFTERBEGIN);
+}
+else {
+  const eventListComponent = new SiteEventListView();
+  render(tripEvents, eventListComponent.element, RenderPosition.AFTEREND);
 
-render(tripTab, new SiteTabView(trips).element, RenderPosition.AFTERBEGIN);
-render(tripFilters, new SiteFilterView().element, RenderPosition.BEFOREBEGIN);
-render(tripEvents, new SiteSortView().element, RenderPosition.AFTERBEGIN);
+  render(tripTab, new SiteTabView(trips).element, RenderPosition.AFTERBEGIN);
+  render(tripFilters, new SiteFilterView().element, RenderPosition.BEFOREBEGIN);
+  render(tripEvents, new SiteSortView().element, RenderPosition.AFTERBEGIN);
 
-for (let i = 0; i < TRIP_COUNT; i++){
-  renderTask(eventListComponent.element, trips[i]);
+  for (let i = 0; i < TRIP_COUNT; i++){
+    renderTask(eventListComponent.element, trips[i]);
+  }
 }
