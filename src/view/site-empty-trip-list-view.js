@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from './abstract-view';
 
 const createEmptyTripListTemplate = () => (
   `<p class="trip-events__msg">
@@ -6,22 +6,8 @@ const createEmptyTripListTemplate = () => (
   </p>`
 );
 
-export default class SiteEmptyTripListView {
-  #element = null;
-
-  get element() {
-    if (!this.#element){
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class SiteEmptyTripListView extends AbstractView{
   get template(){
     return createEmptyTripListTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

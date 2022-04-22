@@ -1,4 +1,4 @@
-import {render, RenderPosition} from './render.js';
+import {render, RenderPosition, replace} from './utils/render';
 
 import SiteTabView from './view/site-tab-view.js';
 import SiteFilterView from './view/site-filter-view.js';
@@ -21,11 +21,11 @@ const renderTask = (eventListElement, trip) => {
   const tripEditComponent = new SiteEventEditView(trip);
 
   const replaceTripToEdit = () => {
-    eventListElement.replaceChild(tripEditComponent.element, tripComponent.element);
+    replace(tripEditComponent, tripComponent);
   };
 
   const replaceEditToTrip = () => {
-    eventListElement.replaceChild(tripComponent.element, tripEditComponent.element);
+    replace(tripComponent, tripEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -36,32 +36,31 @@ const renderTask = (eventListElement, trip) => {
     }
   };
 
-  tripComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  tripComponent.setEditClickHandler(() => {
     replaceTripToEdit();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  tripEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  tripEditComponent.setFormSubmitHandler(() => {
     replaceEditToTrip();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  render(eventListElement, tripComponent.element, RenderPosition.BEFOREEND);
+  render(eventListElement, tripComponent, RenderPosition.BEFOREEND);
 };
 
 if (trips.length === 0){
-  render(tripTab, new SiteTabView(trips).element, RenderPosition.AFTERBEGIN);
-  render(tripFilters, new SiteFilterView().element, RenderPosition.BEFOREBEGIN);
-  render(tripEvents, new SiteEmptyTripListView().element, RenderPosition.AFTERBEGIN);
+  render(tripTab, new SiteTabView(trips), RenderPosition.AFTERBEGIN);
+  render(tripFilters, new SiteFilterView(), RenderPosition.BEFOREBEGIN);
+  render(tripEvents, new SiteEmptyTripListView(), RenderPosition.AFTERBEGIN);
 }
 else {
   const eventListComponent = new SiteEventListView();
-  render(tripEvents, eventListComponent.element, RenderPosition.AFTEREND);
+  render(tripEvents, eventListComponent, RenderPosition.AFTEREND);
 
-  render(tripTab, new SiteTabView(trips).element, RenderPosition.AFTERBEGIN);
-  render(tripFilters, new SiteFilterView().element, RenderPosition.BEFOREBEGIN);
-  render(tripEvents, new SiteSortView().element, RenderPosition.AFTERBEGIN);
+  render(tripTab, new SiteTabView(trips), RenderPosition.AFTERBEGIN);
+  render(tripFilters, new SiteFilterView(), RenderPosition.BEFOREBEGIN);
+  render(tripEvents, new SiteSortView(), RenderPosition.AFTERBEGIN);
 
   for (let i = 0; i < TRIP_COUNT; i++){
     renderTask(eventListComponent.element, trips[i]);

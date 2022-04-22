@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {createElement} from '../render';
+import AbstractView from './abstract-view';
 
 const createSiteEventEditTemplate = (trip) => {
   const {additionalOptions, photo, dateStart, dateEnd, price, waypointType, destination, description} = trip;
@@ -146,27 +146,25 @@ const createSiteEventEditTemplate = (trip) => {
   `;
 };
 
-export default class SiteEventEditView{
-  #element = null;
+export default class SiteEventEditView extends AbstractView{
   #trip = null;
 
   constructor(trip) {
+    super();
     this.#trip = trip;
-  }
-
-  get element() {
-    if (!this.#element){
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template(){
     return createSiteEventEditTemplate(this.#trip);
   }
 
-  removeElement(){
-    this.#element = null;
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 }
