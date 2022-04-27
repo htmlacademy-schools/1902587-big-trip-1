@@ -1,6 +1,6 @@
 import {generateDates} from '../mock/trip.js';
 import dayjs from 'dayjs';
-import {createElement} from '../render';
+import AbstractView from './abstract-view';
 
 const createSiteTabTemplate = (trips) => {
 
@@ -29,28 +29,16 @@ const createSiteTabTemplate = (trips) => {
            </section>`;
 };
 
-export default class SiteTabView{
-  #element = null;
+export default class SiteTabView extends AbstractView{
   #trips = null;
 
   constructor(trips) {
+    super();
     this.#trips = trips;
-  }
-
-  get element() {
-    if (!this.#element){
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template(){
     return createSiteTabTemplate(this.#trips);
-  }
-
-  removeElement(){
-    this.#element = null;
   }
 }
 

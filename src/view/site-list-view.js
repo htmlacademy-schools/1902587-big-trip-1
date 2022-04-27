@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {createElement} from '../render';
+import AbstractView from './abstract-view';
 
 export const createSiteListTemplate = (trip) => {
   const {waypointType, destination, dateStart, dateEnd, durationStay, additionalOptions, price, isFavorite} = trip;
@@ -78,28 +78,26 @@ export const createSiteListTemplate = (trip) => {
              </li>`;
 };
 
-export default class SiteListView{
-  #element = null;
+export default class SiteListView extends AbstractView{
   #trip = null;
 
   constructor(trip) {
+    super();
     this.#trip = trip;
-  }
-
-  get element() {
-    if (!this.#element){
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template(){
     return createSiteListTemplate(this.#trip);
   }
 
-  removeElement(){
-    this.#element = null;
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 }
 
