@@ -128,6 +128,9 @@ const createSiteEventEditTemplate = (trip) => {
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
                   <button class="event__reset-btn" type="reset">Cancel</button>
+                  <button class="event__rollup-btn" type="button">
+                    <span class="visually-hidden">Open event</span>
+                  </button>
                 </header>
                 <section class="event__details">
                   ${offersList}
@@ -166,5 +169,16 @@ export default class SiteEventEditView extends AbstractView{
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit();
+    this._callback.formSubmit(this.#trip);
+  }
+
+  setRollupClickHandler = (callback) => {
+    this._callback.rollupClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+  }
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.rollupClick();
   }
 }
