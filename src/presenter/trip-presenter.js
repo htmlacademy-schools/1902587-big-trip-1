@@ -4,15 +4,21 @@ import SiteEventListView from '../view/site-event-list-view';
 import {render, RenderPosition} from '../utils/render';
 import PointPresenter from './point-presenter';
 import {updateItem} from '../utils/common';
+import {sortTaskByDay, sortTaskByDuration, sortTaskByPrice} from '../utils/point';
+import {SortType} from '../utils/const';
 
 export default class TripPresenter{
   #mainElement = null;
   #tripEvents = null;
 
   #eventListComponent = new SiteEventListView();
+  #sortComponent = new SiteSortView();
 
   #trips = [];
   #pointPresenter = new Map();
+
+  #currentSortType = SortType.SORT_DAY;
+  #sourcedTripPoints = [];
 
   constructor(mainElement) {
     this.#mainElement = mainElement;
@@ -21,6 +27,7 @@ export default class TripPresenter{
 
   init = (trips) => {
     this.#trips = [...trips];
+    this.#sourcedTripPoints = [...trips];
     this.#renderMain();
   }
 
@@ -30,6 +37,7 @@ export default class TripPresenter{
 
   #handleTaskChange = (updatedPoint) => {
     this.#trips = updateItem(this.#trips, updatedPoint);
+    this.#sourcedTripPoints = updateItem(this.#sourcedTripPoints, updatedPoint);
     this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
   }
 
@@ -43,8 +51,35 @@ export default class TripPresenter{
     render(this.#tripEvents, new SiteEmptyTripListView(), RenderPosition.AFTERBEGIN);
   }
 
+  #sortTasks = (sortType) => {
+    switch (sortType) {
+      case SortType.SORT_DAY:
+        this.#trips.sort(sortTaskByDay);
+        break;
+      case SortType.SORT_TIME:
+        this.#trips.sort(sortTaskByDuration);
+        break;
+      case SortType.SORT_PRICE:
+        this.#trips.sort(sortTaskByPrice);
+        break;
+      default:
+        this.#trips = [...this.#sourcedTripPoints];
+    }
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortTasks(sortType);
+    this.#clearTaskList();
+    this.#renderTripEventsList();
+  }
+
   #renderSort = () => {
-    render(this.#tripEvents, new SiteSortView(), RenderPosition.AFTERBEGIN);
+    render(this.#tripEvents, this.#sortComponent, RenderPosition.AFTERBEGIN);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
   #renderTripEventsListElement = () => {
@@ -64,6 +99,7 @@ export default class TripPresenter{
     else {
       this.#renderSort();
       this.#renderTripEventsListElement();
+      this.#sortTasks(this.#currentSortType);
       this.#renderTripEventsList();
     }
   }

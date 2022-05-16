@@ -97,10 +97,10 @@ export default class PointPresenter {
 
   #handleRollupClick = () => {
     this.#replaceFormToItem();
-  };
+  }
 
   #handleFormSubmit = (trip) => {
     this.#changeData(trip);
     this.#replaceFormToItem();
-  };
+  }
 }
