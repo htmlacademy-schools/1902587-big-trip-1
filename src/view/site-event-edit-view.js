@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import AbstractView from './abstract-view';
+import SmartView from './smart-view';
+import {destinations} from '../mock/destinations';
 
 const createSiteEventEditTemplate = (trip) => {
   const {additionalOptions, photo, dateStart, dateEnd, price, waypointType, destination, description} = trip;
@@ -112,10 +113,10 @@ const createSiteEventEditTemplate = (trip) => {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
+                    <input class="event__input  event__input--time event__input-start-time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
+                    <input class="event__input  event__input--time event__input-end-time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -149,16 +150,78 @@ const createSiteEventEditTemplate = (trip) => {
   `;
 };
 
-export default class SiteEventEditView extends AbstractView{
+export default class SiteEventEditView extends SmartView{
   #trip = null;
 
   constructor(trip) {
     super();
-    this.#trip = trip;
+    this._data = SiteEventEditView.parsePointToData(trip);
+
+    this.#setInnerHandlers();
   }
 
   get template(){
-    return createSiteEventEditTemplate(this.#trip);
+    return createSiteEventEditTemplate(this._data);
+  }
+
+  reset = (trip) => {
+    this.updateData(
+      SiteEventEditView.parsePointToData(trip),
+    );
+  }
+
+  restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setRollupClickHandler(this._callback.rollupClick);
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#typeGroupClickHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input-start-time')
+      .addEventListener('change', this.#startTimeChangeHandler);
+    this.element.querySelector('.event__input-end-time')
+      .addEventListener('change', this.#endTimeChangeHandler);
+    this.element.querySelector('.event__input--price')
+      .addEventListener('change', this.#basePriceChangeHandler);
+  }
+
+  #typeGroupClickHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      type: evt.target.value
+    }, false);
+  }
+
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      destination: this.#getChangedDestination(evt.target.value)
+    }, false);
+  }
+
+  #startTimeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      dateFrom: evt.target.value
+    }, true);
+  }
+
+  #endTimeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      dateTo: evt.target.value
+    }, true);
+  }
+
+  #basePriceChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      basePrice: evt.target.value
+    }, true);
   }
 
   setFormSubmitHandler = (callback) => {
@@ -169,7 +232,8 @@ export default class SiteEventEditView extends AbstractView{
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit();
-    this._callback.formSubmit(this.#trip);
+    this._callback.formSubmit(this._data);
+    this._callback.formSubmit(SiteEventEditView.parseDataToPoint(this._data));
   }
 
   setRollupClickHandler = (callback) => {
@@ -181,4 +245,30 @@ export default class SiteEventEditView extends AbstractView{
     evt.preventDefault();
     this._callback.rollupClick();
   }
+
+  static parsePointToData = (point) => ({...point,
+
+  });
+
+  static parseDataToPoint = (data) => {
+    const point = {...data};
+
+    return point;
+  }
+
+  #getChangedDestination = (destinationName) => {
+    const allDestinations = destinations();
+
+    for (let i = 0; i < allDestinations.length; i++) {
+      if (allDestinations[i].name === destinationName) {
+        return allDestinations[i];
+      }
+    }
+
+    return {
+      'description': null,
+      'name': '',
+      'pictures': []
+    };
+  };
 }
