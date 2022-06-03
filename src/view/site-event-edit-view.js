@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
 import SmartView from './smart-view';
 import {destinations} from '../mock/destinations';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createSiteEventEditTemplate = (trip) => {
   const {additionalOptions, photo, dateStart, dateEnd, price, waypointType, destination, description} = trip;
@@ -152,16 +155,28 @@ const createSiteEventEditTemplate = (trip) => {
 
 export default class SiteEventEditView extends SmartView{
   #trip = null;
+  #datepicker = null;
 
   constructor(trip) {
     super();
     this._data = SiteEventEditView.parsePointToData(trip);
 
     this.#setInnerHandlers();
+    this.#setStartDatepicker();
+    this.#setEndDatepicker();
   }
 
   get template(){
     return createSiteEventEditTemplate(this._data);
+  }
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
   }
 
   reset = (trip) => {
@@ -172,8 +187,46 @@ export default class SiteEventEditView extends SmartView{
 
   restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setStartDatepicker();
+    this.#setEndDatepicker();
     this.setRollupClickHandler(this._callback.rollupClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  #setStartDatepicker = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('.event__input-start-time'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.date,
+        onChange: this.#dateStartChangeHandler,
+      },
+    );
+  }
+
+  #setEndDatepicker = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('.event__input-end-time'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.date,
+        onChange: this.#dateEndChangeHandler,
+      },
+    );
+  }
+
+  #dateEndChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateEnd: userDate,
+    });
+  }
+
+  #dateStartChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateStart: userDate,
+    });
   }
 
   #setInnerHandlers = () => {
