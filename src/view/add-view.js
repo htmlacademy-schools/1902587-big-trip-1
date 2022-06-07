@@ -153,13 +153,13 @@ const createSiteEventEditTemplate = (trip) => {
   `;
 };
 
-export default class SiteEventEditView extends SmartView{
+export default class SiteEventAddView extends SmartView{
   #trip = null;
   #datepicker = null;
 
   constructor(trip) {
     super();
-    this._data = SiteEventEditView.parsePointToData(trip);
+    this._data = SiteEventAddView.parsePointToData(trip);
 
     this.#setInnerHandlers();
     this.#setStartDatepicker();
@@ -181,7 +181,7 @@ export default class SiteEventEditView extends SmartView{
 
   reset = (trip) => {
     this.updateData(
-      SiteEventEditView.parsePointToData(trip),
+      SiteEventAddView.parsePointToData(trip),
     );
   }
 
@@ -189,9 +189,9 @@ export default class SiteEventEditView extends SmartView{
     this.#setInnerHandlers();
     this.#setStartDatepicker();
     this.#setEndDatepicker();
-    this.setRollupClickHandler(this._callback.rollupClick);
+    //this.setRollupClickHandler(this._callback.rollupClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setDeleteClickHandler(this._callback.deleteClick);
+    //this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   #setStartDatepicker = () => {
@@ -287,7 +287,7 @@ export default class SiteEventEditView extends SmartView{
     evt.preventDefault();
     this._callback.formSubmit();
     this._callback.formSubmit(this._data);
-    this._callback.formSubmit(SiteEventEditView.parseDataToPoint(this._data));
+    this._callback.formSubmit(SiteEventAddView.parseDataToPoint(this._data));
   }
 
   setRollupClickHandler = (callback) => {
@@ -307,7 +307,7 @@ export default class SiteEventEditView extends SmartView{
 
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick(SiteEventEditView.parseDataToPoint(this._data));
+    this._callback.deleteClick(SiteEventAddView.parseDataToPoint(this._data));
   }
 
   static parsePointToData = (point) => ({...point,
