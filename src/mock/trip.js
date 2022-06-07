@@ -34,26 +34,16 @@ const generateDescription = () => {
 };
 
 export const generateDates = () => {
-  const maxDayGap = 7;
-  const maxHourGap = 23;
-  const maxMinuteGap = 59;
-  const dayStart = getRandomInteger(-maxDayGap, maxDayGap);
-  const hourStart = getRandomInteger(-maxHourGap, maxHourGap);
-  const minuteStart = getRandomInteger(-maxMinuteGap, maxMinuteGap);
-  const dayEnd = getRandomInteger(0, maxDayGap);
-  const hourEnd = getRandomInteger(0, maxHourGap);
-  const minuteEnd = getRandomInteger(0, maxMinuteGap);
-
+  const maxGap = 7;
   const dateStart = dayjs()
-    .add(dayStart, 'day')
-    .add(hourStart, 'hour')
-    .add(minuteStart, 'minute');
-
-  const dateEnd = dateStart.clone()
-    .add(dayEnd, 'day')
-    .add(hourEnd, 'hour')
-    .add(minuteEnd, 'minute');
-
+    .add(getRandomInteger(-maxGap, maxGap), 'day')
+    .add(getRandomInteger(-maxGap, maxGap), 'hour')
+    .add(getRandomInteger(-maxGap, maxGap), 'minute');
+  const dateEnd = dateStart
+    .clone()
+    .add(getRandomInteger(0, maxGap), 'day')
+    .add(getRandomInteger(0, 59), 'hour')
+    .add(getRandomInteger(0, 59), 'minute');
   return{
     start: dateStart.toDate(),
     end: dateEnd.toDate()
